@@ -2,17 +2,20 @@ import {useEffect, useState} from "react";
 
 import {useStores} from "../../hooks/useStores";
 import {observer} from "mobx-react-lite";
+import Player from "../Player";
 
 const Movies = () => {
 
-    const { moviesStore } = useStores();
+    const { moviesStore, videosStore } = useStores();
+    const [player, setPlayer] = useState(false);
 
     useEffect(() => {
         moviesStore.fetchMovies();
     }, [moviesStore])
 
     const playVideo = (id) => () => {
-        moviesStore.fetchVideoLink(id);
+        videosStore.fetchVideos(id);
+        setPlayer(true);
     }
 
     return (
@@ -23,11 +26,13 @@ const Movies = () => {
                         <div key={index} className="md:h-52 lg:h-52 bg-gray-100 rounded-lg">
                             <h1 className="text-blue-800 font-medium uppercase">{title}</h1>
                             <p className="pt-1">{overview}</p>
-                            <button onClick={playVideo(id)}>Play</button>
+                            <button type="button" className="text-red-500 cursor-pointer" onClick={playVideo(id)}>Play</button>
                         </div>
                     )
                 })}
             </div>
+            {player === true && <Player onClose={() => setPlayer(false)} />}
+
         </div>
     );
 }
